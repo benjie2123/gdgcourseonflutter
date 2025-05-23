@@ -1,33 +1,29 @@
 import CodeBlock from "@/components/code-block"
+import ProgressTracker from "@/components/progress-tracker"
 
 export default function IntermediateConceptsPage() {
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Flutter Intermediate Concepts</h1>
+    <div className="container max-w-4xl mx-auto">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Intermediate Flutter Concepts</h1>
+          <p className="text-muted-foreground">Taking your Flutter skills to the next level with advanced techniques</p>
+        </div>
 
-      <p className="mb-6">
-        Now that you understand the basics of Flutter, let's dive into some intermediate concepts that will help you
-        build more complex and feature-rich applications.
-      </p>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">State Management</h2>
+          <p>
+            As your Flutter applications grow in complexity, managing state becomes increasingly important. Flutter
+            offers several approaches to state management.
+          </p>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">1. State Management</h2>
-
-        <p className="mb-4">
-          State management is one of the most important aspects of Flutter development. It determines how your app's
-          data flows and changes over time.
-        </p>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-2">setState</h3>
-            <p className="mb-3">
-              The simplest form of state management in Flutter is using the <code>setState</code> method in
-              StatefulWidget.
-            </p>
-            <CodeBlock
-              language="dart"
-              code={`class CounterPage extends StatefulWidget {
+          <h3 className="text-xl font-medium mt-4">setState</h3>
+          <p>
+            The simplest form of state management in Flutter is using <code>setState()</code> within a{" "}
+            <code>StatefulWidget</code>.
+          </p>
+          <CodeBlock
+            code="class CounterPage extends StatefulWidget {
   @override
   _CounterPageState createState() => _CounterPageState();
 }
@@ -44,55 +40,130 @@ class _CounterPageState extends State<CounterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Counter'),
-      ),
+      appBar: AppBar(title: Text('Counter')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: Text(
+          'Count: $_counter',
+          style: TextStyle(fontSize: 24),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
-        tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
     );
   }
-}`}
-            />
-          </div>
+}"
+            language="dart"
+          />
+          <p className="mt-2">
+            While <code>setState()</code> works well for simple cases, it becomes cumbersome for larger applications
+            where state needs to be shared across multiple widgets.
+          </p>
 
-          <div>
-            <h3 className="font-medium mb-2">Provider</h3>
-            <p className="mb-3">
-              For more complex apps, you might want to use a state management solution like Provider, which implements
-              the InheritedWidget pattern in a more developer-friendly way.
-            </p>
-            <CodeBlock
-              language="dart"
-              code={`// 1. Create a model class
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+          <h3 className="text-xl font-medium mt-4">InheritedWidget</h3>
+          <p>
+            <code>InheritedWidget</code> is a base class that allows efficient propagation of information down the
+            widget tree. It's the foundation for more advanced state management solutions.
+          </p>
+          <CodeBlock
+            code="class CounterProvider extends InheritedWidget {
+  final int counter;
+  final Function incrementCounter;
 
-class CounterModel extends ChangeNotifier {
-  int _count = 0;
-  int get count => _count;
+  CounterProvider({
+    Key? key,
+    required this.counter,
+    required this.incrementCounter,
+    required Widget child,
+  }) : super(key: key, child: child);
 
-  void increment() {
-    _count++;
-    notifyListeners();
+  static CounterProvider of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<CounterProvider>()!;
+  }
+
+  @override
+  bool updateShouldNotify(CounterProvider oldWidget) {
+    return counter != oldWidget.counter;
   }
 }
 
-// 2. Provide the model to the widget tree
+// Usage
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CounterProvider(
+      counter: _counter,
+      incrementCounter: _incrementCounter,
+      child: MaterialApp(
+        home: CounterPage(),
+      ),
+    );
+  }
+}
+
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final provider = CounterProvider.of(context);
+    
+    return Scaffold(
+      appBar: AppBar(title: Text('Counter')),
+      body: Center(
+        child: Text(
+          'Count: ${provider.counter}',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => provider.incrementCounter(),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}"
+            language="dart"
+          />
+
+          <h3 className="text-xl font-medium mt-4">Provider Package</h3>
+          <p>
+            The Provider package is a wrapper around <code>InheritedWidget</code> that makes it easier to use. It's one
+            of the most popular state management solutions in Flutter.
+          </p>
+          <CodeBlock
+            code="// First, add the provider package to your pubspec.yaml
+// dependencies:
+//   provider: ^6.0.5
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Create a model class
+class CounterModel extends ChangeNotifier {
+  int _counter = 0;
+  
+  int get counter => _counter;
+  
+  void increment() {
+    _counter++;
+    notifyListeners();  // Notify listeners to rebuild
+  }
+}
+
+// Set up the provider
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -102,198 +173,91 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Provider Example'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CounterDisplay(),
-              CounterIncrement(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// 3. Consume the model in your widgets
-class CounterDisplay extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Count: \${context.watch<CounterModel>().count}',
-    );
-  }
-}
-
-class CounterIncrement extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        context.read<CounterModel>().increment();
-      },
-      child: Text('Increment'),
-    );
-  }
-}`}
-            />
-          </div>
-        </div>
-
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
-          <h3 className="font-medium text-blue-800">When to Use Different State Management Solutions</h3>
-          <ul className="list-disc list-inside mt-2 text-blue-700">
-            <li>
-              <strong>setState</strong>: For simple widgets with local state
-            </li>
-            <li>
-              <strong>Provider</strong>: For sharing state between widgets in a subtree
-            </li>
-            <li>
-              <strong>Bloc/Cubit</strong>: For complex apps with many business logic components
-            </li>
-            <li>
-              <strong>Riverpod</strong>: An improved version of Provider with additional features
-            </li>
-            <li>
-              <strong>GetX</strong>: For a lightweight, high-performance state management solution
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">2. Navigation</h2>
-
-        <p className="mb-4">
-          Navigation is essential for multi-screen apps. Flutter provides a powerful navigation system based on routes.
-        </p>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-2">Basic Navigation</h3>
-            <p className="mb-3">The simplest way to navigate between screens is using the Navigator.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
-
-class SecondScreen extends StatelessWidget {
+// Use the provider in your widgets
+class CounterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Second Screen"),
-      ),
+      appBar: AppBar(title: Text('Counter with Provider')),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
+        child: Consumer<CounterModel>(
+          builder: (context, model, child) {
+            return Text(
+              'Count: ${model.counter}',
+              style: TextStyle(fontSize: 24),
+            );
           },
-          child: Text('Go back!'),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Access the model and call increment
+          Provider.of<CounterModel>(context, listen: false).increment();
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
-}
+}"
+            language="dart"
+          />
+          <p className="mt-2">
+            Provider is recommended by the Flutter team and is a great choice for most applications. There are other
+            state management solutions like Bloc, Redux, and GetX, each with its own strengths and use cases.
+          </p>
+        </div>
 
-// Navigate to a new screen
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Navigation and Routing</h2>
+          <p>
+            Navigation is a crucial part of most applications. Flutter provides a powerful navigation system to move
+            between screens.
+          </p>
+
+          <h3 className="text-xl font-medium mt-4">Basic Navigation</h3>
+          <p>
+            The simplest way to navigate between screens is using the <code>Navigator</code> class.
+          </p>
+          <CodeBlock
+            code="// Navigate to a new screen
 Navigator.push(
   context,
   MaterialPageRoute(builder: (context) => SecondScreen()),
 );
 
 // Go back to the previous screen
-Navigator.pop(context);`}
-            />
-          </div>
+Navigator.pop(context);
 
-          <div>
-            <h3 className="font-medium mb-2">Named Routes</h3>
-            <p className="mb-3">For more complex navigation, you can use named routes.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Screen'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/details', arguments: {'id': 123, 'title': 'Item Details'});
-              },
-              child: Text('Go to Details'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class DetailsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final id = args['id'];
-    final title = args['title'];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Details Screen'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Item ID: \$id'),
-            Text('Item Title: \$title'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings Screen'),
-      ),
-      body: Center(
-        child: Text('Settings Content'),
-      ),
-    );
-  }
-}
-
-// Define routes in MaterialApp
-MaterialApp(
-  initialRoute: '/',
-  routes: {
-    '/': (context) => HomeScreen(),
-    '/details': (context) => DetailsScreen(),
-    '/settings': (context) => SettingsScreen(),
-  },
+// Replace the current screen
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (context) => ReplacementScreen()),
 );
+
+// Clear the navigation stack and show a new screen
+Navigator.pushAndRemoveUntil(
+  context,
+  MaterialPageRoute(builder: (context) => HomeScreen()),
+  (route) => false,  // Remove all previous routes
+);"
+            language="dart"
+          />
+
+          <h3 className="text-xl font-medium mt-4">Named Routes</h3>
+          <p>For more complex applications, you can use named routes to organize your navigation.</p>
+          <CodeBlock
+            code="void main() {
+  runApp(
+    MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomeScreen(),
+        '/details': (context) => DetailsScreen(),
+        '/settings': (context) => SettingsScreen(),
+      },
+    ),
+  );
+}
 
 // Navigate to a named route
 Navigator.pushNamed(context, '/details');
@@ -305,57 +269,36 @@ Navigator.pushNamed(
   arguments: {'id': 123, 'title': 'Item Details'},
 );
 
-// Access arguments in the destination screen
-final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-final id = args['id'];
-final title = args['title'];`}
-            />
-          </div>
+// Retrieve arguments in the destination screen
+final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;"
+            language="dart"
+          />
+
+          <h3 className="text-xl font-medium mt-4">Navigation 2.0 (Router API)</h3>
+          <p>
+            Flutter 1.22 introduced a new Router API (often called Navigation 2.0) that provides more control over the
+            navigation stack and better support for deep linking and web URLs.
+          </p>
+          <p className="mt-2">
+            While more complex, it's worth learning for advanced applications, especially those targeting the web or
+            needing deep linking support.
+          </p>
         </div>
 
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
-          <h3 className="font-medium text-yellow-800">Navigation Best Practices</h3>
-          <ul className="list-disc list-inside mt-2 text-yellow-700">
-            <li>Use named routes for better organization in larger apps</li>
-            <li>
-              Consider using a navigation package like go_router or auto_route for complex navigation requirements
-            </li>
-            <li>Be mindful of the navigation stack to avoid memory leaks</li>
-            <li>Use Navigator 2.0 for more control over the navigation stack (advanced)</li>
-          </ul>
-        </div>
-      </section>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Working with Lists</h2>
+          <p>
+            Lists are a common UI pattern in mobile apps. Flutter provides several widgets for displaying lists
+            efficiently.
+          </p>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">3. Working with Lists</h2>
-
-        <p className="mb-4">
-          Lists are a common UI pattern in mobile apps. Flutter provides several widgets to efficiently display lists of
-          data.
-        </p>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-2">ListView</h3>
-            <p className="mb-3">ListView is the most common way to display a scrolling list of widgets.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
-
-class Item {
-  final String title;
-  final String description;
-
-  Item(this.title, this.description);
-}
-
-final List<Item> items = [
-  Item('Item 1', 'Description for Item 1'),
-  Item('Item 2', 'Description for Item 2'),
-  Item('Item 3', 'Description for Item 3'),
-];
-
-// Basic ListView with static children
+          <h3 className="text-xl font-medium mt-4">ListView</h3>
+          <p>
+            <code>ListView</code> is the most basic list widget in Flutter. It's similar to a <code>Column</code> but
+            with scrolling capabilities.
+          </p>
+          <CodeBlock
+            code="// Basic ListView with fixed children
 ListView(
   children: [
     ListTile(title: Text('Item 1')),
@@ -371,45 +314,40 @@ ListView.builder(
     return ListTile(
       title: Text(items[index].title),
       subtitle: Text(items[index].description),
-      leading: Icon(Icons.star),
       onTap: () {
-        print('Tapped on \${items[index].title}');
+        // Handle item tap
       },
     );
   },
-);`}
-            />
-          </div>
+);
 
-          <div>
-            <h3 className="font-medium mb-2">GridView</h3>
-            <p className="mb-3">GridView displays items in a 2D grid.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
+// ListView.separated for lists with separators
+ListView.separated(
+  itemCount: items.length,
+  itemBuilder: (context, index) {
+    return ListTile(title: Text(items[index]));
+  },
+  separatorBuilder: (context, index) {
+    return Divider();  // Add a divider between items
+  },
+);"
+            language="dart"
+          />
 
-class Item {
-  final String title;
-  final String description;
-
-  Item(this.title, this.description);
-}
-
-final List<Item> items = [
-  Item('Item 1', 'Description for Item 1'),
-  Item('Item 2', 'Description for Item 2'),
-  Item('Item 3', 'Description for Item 3'),
-];
-
+          <h3 className="text-xl font-medium mt-4">GridView</h3>
+          <p>
+            <code>GridView</code> displays items in a 2D grid.
+          </p>
+          <CodeBlock
+            code="// Basic GridView with fixed children
 GridView.count(
-  crossAxisCount: 2, // Number of columns
-  children: List.generate(10, (index) {
-    return Card(
-      child: Center(
-        child: Text('Item \$index'),
-      ),
-    );
-  }),
+  crossAxisCount: 2,  // 2 columns
+  children: [
+    Card(child: Center(child: Text('Item 1'))),
+    Card(child: Center(child: Text('Item 2'))),
+    Card(child: Center(child: Text('Item 3'))),
+    Card(child: Center(child: Text('Item 4'))),
+  ],
 );
 
 // GridView.builder for dynamic grids
@@ -422,55 +360,30 @@ GridView.builder(
   itemCount: items.length,
   itemBuilder: (context, index) {
     return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.photo, size: 50),
-          Text(items[index].title),
-        ],
+      child: Center(
+        child: Text(items[index]),
       ),
     );
   },
-);`}
-            />
-          </div>
+);"
+            language="dart"
+          />
         </div>
 
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
-          <h3 className="font-medium text-blue-800">Performance Tips for Lists</h3>
-          <ul className="list-disc list-inside mt-2 text-blue-700">
-            <li>
-              Use <code>ListView.builder</code> instead of <code>ListView</code> for long lists
-            </li>
-            <li>Implement pagination for very large datasets</li>
-            <li>
-              Use <code>const</code> constructors where possible
-            </li>
-            <li>
-              Consider using <code>ListView.separated</code> for lists with dividers
-            </li>
-            <li>
-              Use <code>cacheExtent</code> to control how many items are kept in memory
-            </li>
-          </ul>
-        </div>
-      </section>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Asynchronous Programming</h2>
+          <p>
+            Flutter applications often need to perform operations that take time, such as fetching data from the
+            internet or reading from a database. Dart provides powerful tools for asynchronous programming.
+          </p>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">4. Asynchronous Programming</h2>
-
-        <p className="mb-4">
-          Flutter apps often need to perform asynchronous operations like fetching data from the internet or reading
-          from a database.
-        </p>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-2">Futures</h3>
-            <p className="mb-3">A Future represents a computation that doesn't complete immediately.</p>
-            <CodeBlock
-              language="dart"
-              code={`// Creating a Future
+          <h3 className="text-xl font-medium mt-4">Futures</h3>
+          <p>
+            A <code>Future</code> represents a computation that doesn't complete immediately. It's similar to a Promise
+            in JavaScript.
+          </p>
+          <CodeBlock
+            code="// Creating a Future
 Future<String> fetchData() async {
   // Simulate network request
   await Future.delayed(Duration(seconds: 2));
@@ -481,163 +394,201 @@ Future<String> fetchData() async {
 void loadData() async {
   try {
     String result = await fetchData();
-    print(result);
+    print(result);  // Prints: Data loaded successfully
   } catch (e) {
-    print('Error: \$e');
+    print('Error: $e');
   }
 }
 
-// Alternative syntax with then/catchError
+// Alternative syntax using then/catchError
 fetchData()
   .then((result) => print(result))
-  .catchError((error) => print('Error: \$error'));`}
-            />
-          </div>
+  .catchError((error) => print('Error: $error'));"
+            language="dart"
+          />
 
-          <div>
-            <h3 className="font-medium mb-2">FutureBuilder</h3>
-            <p className="mb-3">FutureBuilder is a widget that makes it easy to work with Futures in your UI.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
-
-Future<String> fetchData() async {
-  // Simulate network request
-  await Future.delayed(Duration(seconds: 2));
-  return 'Data loaded successfully';
-}
-
-FutureBuilder<String>(
+          <h3 className="text-xl font-medium mt-4">FutureBuilder</h3>
+          <p>
+            <code>FutureBuilder</code> is a widget that makes it easy to work with asynchronous data in your UI.
+          </p>
+          <CodeBlock
+            code="FutureBuilder<String>(
   future: fetchData(),
-  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+  builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
+      return CircularProgressIndicator();  // Loading indicator
     } else if (snapshot.hasError) {
-      return Text('Error: \${snapshot.error}');
+      return Text('Error: ${snapshot.error}');  // Error state
     } else {
-      return Text('Data: \${snapshot.data}');
+      return Text(snapshot.data!);  // Success state
     }
   },
-);`}
-            />
-          </div>
+)"
+            language="dart"
+          />
 
-          <div>
-            <h3 className="font-medium mb-2">Streams</h3>
-            <p className="mb-3">Streams provide a sequence of asynchronous events.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
-
-// Creating a Stream
+          <h3 className="text-xl font-medium mt-4">Streams</h3>
+          <p>
+            A <code>Stream</code> is a sequence of asynchronous events. It's useful for data that changes over time,
+            like user input or real-time updates.
+          </p>
+          <CodeBlock
+            code="// Creating a Stream
 Stream<int> countStream(int max) async* {
   for (int i = 1; i <= max; i++) {
     await Future.delayed(Duration(seconds: 1));
-    yield i;
+    yield i;  // Emit a value to the stream
   }
 }
 
-// Using a StreamBuilder
+// Using a Stream
+void listenToStream() {
+  final stream = countStream(5);
+  
+  stream.listen(
+    (data) => print('Data: $data'),  // Called for each emitted value
+    onError: (error) => print('Error: $error'),
+    onDone: () => print('Stream completed'),
+  );
+}
+
+// StreamBuilder for UI
 StreamBuilder<int>(
-  stream: countStream(10),
-  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+  stream: countStream(5),
+  builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return Text('Waiting for data...');
+      return CircularProgressIndicator();
     } else if (snapshot.hasError) {
-      return Text('Error: \${snapshot.error}');
+      return Text('Error: ${snapshot.error}');
     } else if (snapshot.hasData) {
-      return Text('Count: \${snapshot.data}');
+      return Text('Count: ${snapshot.data}');
     } else {
       return Text('No data');
     }
   },
-);`}
-            />
-          </div>
+)"
+            language="dart"
+          />
         </div>
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">5. Themes and Styling</h2>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Handling User Input and Forms</h2>
+          <p>
+            Forms are a common way to collect user input. Flutter provides a <code>Form</code> widget and various form
+            fields to make form handling easier.
+          </p>
 
-        <p className="mb-4">
-          Flutter provides a powerful theming system to maintain a consistent look and feel across your app.
-        </p>
+          <h3 className="text-xl font-medium mt-4">Form and FormField</h3>
+          <CodeBlock
+            code="// Create a Form with a GlobalKey
+final _formKey = GlobalKey<FormState>();
 
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-2">ThemeData</h3>
-            <p className="mb-3">Define a theme for your app using ThemeData.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
-
-MaterialApp(
-  theme: ThemeData(
-    primarySwatch: Colors.blue,
-    brightness: Brightness.light,
-    fontFamily: 'Roboto',
-    textTheme: TextTheme(
-      headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.blue,
+Form(
+  key: _formKey,
+  child: Column(
+    children: [
+      TextFormField(
+        decoration: InputDecoration(labelText: 'Email'),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your email';
+          }
+          if (!value.contains('@')) {
+            return 'Please enter a valid email';
+          }
+          return null;  // Return null for valid input
+        },
       ),
-    ),
+      TextFormField(
+        decoration: InputDecoration(labelText: 'Password'),
+        obscureText: true,  // Hide password
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your password';
+          }
+          if (value.length < 6) {
+            return 'Password must be at least 6 characters';
+          }
+          return null;
+        },
+      ),
+      ElevatedButton(
+        onPressed: () {
+          // Validate the form
+          if (_formKey.currentState!.validate()) {
+            // Form is valid, process the data
+            _formKey.currentState!.save();
+            // Submit the form
+          }
+        },
+        child: Text('Submit'),
+      ),
+    ],
   ),
-  darkTheme: ThemeData(
-    brightness: Brightness.dark,
-    // Define dark theme properties
-  ),
-  themeMode: ThemeMode.system, // Use system theme
-  home: MyHomePage(),
-);`}
-            />
-          </div>
+)"
+            language="dart"
+          />
 
-          <div>
-            <h3 className="font-medium mb-2">Using Theme</h3>
-            <p className="mb-3">Access the current theme in your widgets.</p>
-            <CodeBlock
-              language="dart"
-              code={`import 'package:flutter/material.dart';
+          <h3 className="text-xl font-medium mt-4">Controlling Form Fields</h3>
+          <p>
+            You can use <code>TextEditingController</code> to control the content of form fields.
+          </p>
+          <CodeBlock
+            code="class MyFormState extends State<MyForm> {
+  // Create controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-// Access theme colors
-Color primaryColor = Theme.of(context).primaryColor;
+  @override
+  void dispose() {
+    // Clean up controllers when the widget is disposed
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
-// Access text styles
-TextStyle headlineStyle = Theme.of(context).textTheme.headlineLarge!;
-
-// Use theme in widgets
-Text(
-  'Hello, Flutter!',
-  style: Theme.of(context).textTheme.headlineLarge,
-);`}
-            />
-          </div>
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _emailController,
+            decoration: InputDecoration(labelText: 'Email'),
+          ),
+          TextFormField(
+            controller: _passwordController,
+            decoration: InputDecoration(labelText: 'Password'),
+            obscureText: true,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Access the values
+              final email = _emailController.text;
+              final password = _passwordController.text;
+              print('Email: $email, Password: $password');
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  }
+}"
+            language="dart"
+          />
         </div>
 
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
-          <h3 className="font-medium text-blue-800">Theme Best Practices</h3>
-          <ul className="list-disc list-inside mt-2 text-blue-700">
-            <li>Define a consistent color palette</li>
-            <li>Use semantic color names (e.g., primaryColor, errorColor)</li>
-            <li>Support both light and dark themes</li>
-            <li>Create reusable text styles</li>
-            <li>Consider accessibility when choosing colors and font sizes</li>
-          </ul>
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mt-8">
+          <h3 className="text-lg font-medium text-blue-800 dark:text-blue-300">Pro Tip</h3>
+          <p className="text-blue-700 dark:text-blue-200">
+            When working with forms, consider using packages like <code>form_field_validator</code> for more advanced
+            validation or <code>flutter_form_builder</code> for a more comprehensive form solution. These packages can
+            save you time and provide more features than the built-in form widgets.
+          </p>
         </div>
-      </section>
 
-      <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-8">
-        <h3 className="font-medium text-green-800">Next Steps</h3>
-        <p className="text-green-700">
-          Now that you understand these intermediate concepts, you're ready to build a complete Flutter app in the
-          Project section.
-        </p>
+        <ProgressTracker section="intermediate-concepts" />
       </div>
     </div>
   )

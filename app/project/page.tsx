@@ -1,100 +1,62 @@
 import CodeBlock from "@/components/code-block"
+import ProgressTracker from "@/components/progress-tracker"
 
 export default function ProjectPage() {
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Hands-On Project: To-Do List App</h1>
+    <div className="container max-w-4xl mx-auto">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Building a To-Do List App</h1>
+          <p className="text-muted-foreground">A hands-on project to apply your Flutter knowledge</p>
+        </div>
 
-      <p className="mb-6">
-        In this section, we'll build a complete To-Do List app using Flutter. This project will help you apply the
-        concepts you've learned so far and gain practical experience with Flutter development.
-      </p>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Project Overview</h2>
+          <p>
+            In this project, we'll build a complete to-do list application for Android using Flutter. This app will
+            allow users to:
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>View a list of tasks</li>
+            <li>Add new tasks</li>
+            <li>Mark tasks as completed</li>
+            <li>Delete tasks</li>
+            <li>View task details on a separate screen</li>
+          </ul>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Project Overview</h2>
+          <div className="flex justify-center my-8">
+            <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden">
+              <img
+                src="/placeholder.svg?key=ix2z8"
+                alt="To-Do List App Preview"
+                className="object-cover w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
 
-        <p className="mb-4">Our To-Do List app will have the following features:</p>
-
-        <ul className="list-disc list-inside space-y-2 mb-6">
-          <li>Add new tasks</li>
-          <li>Mark tasks as completed</li>
-          <li>Delete tasks</li>
-          <li>View task details</li>
-          <li>Navigate between screens</li>
-        </ul>
-
-        <p className="mb-4">The app will consist of two main screens:</p>
-
-        <ol className="list-decimal list-inside space-y-2 mb-4">
-          <li>Home Screen: Displays the list of tasks with add/complete/delete functionality</li>
-          <li>Detail Screen: Shows the details of a selected task</li>
-        </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Step 1: Create a New Flutter Project</h2>
-
-        <p className="mb-4">First, let's create a new Flutter project:</p>
-
-        <CodeBlock
-          language="bash"
-          code={`flutter create todo_app
-cd todo_app`}
-        />
-
-        <p className="mt-4">
-          This creates a new Flutter project with the default counter app template. We'll replace this with our To-Do
-          List app.
-        </p>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Step 2: Create the Task Model</h2>
-
-        <p className="mb-4">
-          Let's start by creating a model for our tasks. Create a new file called <code>task.dart</code> in the{" "}
-          <code>lib</code> folder:
-        </p>
-
-        <CodeBlock
-          language="dart"
-          code={`// lib/task.dart
-class Task {
-  String id;
-  String title;
-  String description;
-  bool isCompleted;
-
-  Task({
-    required this.id,
-    required this.title,
-    required this.description,
-    this.isCompleted = false,
-  });
-}`}
-        />
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Step 3: Create the Home Screen</h2>
-
-        <p className="mb-4">
-          Now, let's create the home screen that displays the list of tasks. Replace the content of{" "}
-          <code>lib/main.dart</code> with the following:
-        </p>
-
-        <CodeBlock
-          language="dart"
-          code={`// lib/main.dart
-import 'package:flutter/material.dart';
-import 'task.dart';
-import 'task_detail_screen.dart';
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 1: Project Setup</h2>
+          <p>Let's start by creating a new Flutter project.</p>
+          <CodeBlock
+            code="flutter create todo_app
+cd todo_app"
+            language="bash"
+          />
+          <p className="mt-4">
+            This creates a new Flutter project with the default counter app template. Let's clean up the{" "}
+            <code>main.dart</code> file and start fresh.
+          </p>
+          <CodeBlock
+            code="import 'package:flutter/material.dart';
 
 void main() {
-  runApp(TodoApp());
+  runApp(const TodoApp());
 }
 
 class TodoApp extends StatelessWidget {
+  const TodoApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -103,123 +65,162 @@ class TodoApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomeScreen(),
+      home: const TodoListScreen(),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final List<Task> _tasks = [];
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-
-  void _addTask() {
-    if (_titleController.text.isEmpty) return;
-
-    setState(() {
-      _tasks.add(Task(
-        id: DateTime.now().toString(),
-        title: _titleController.text,
-        description: _descriptionController.text,
-      ));
-      _titleController.clear();
-      _descriptionController.clear();
-    });
-  }
-
-  void _toggleTaskStatus(String id) {
-    setState(() {
-      final task = _tasks.firstWhere((task) => task.id == id);
-      task.isCompleted = !task.isCompleted;
-    });
-  }
-
-  void _deleteTask(String id) {
-    setState(() {
-      _tasks.removeWhere((task) => task.id == id);
-    });
-  }
+class TodoListScreen extends StatelessWidget {
+  const TodoListScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
+        title: const Text('Todo List'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Task Title',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 8),
-                TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Task Description',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: _addTask,
-                  child: Text('Add Task'),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _tasks.isEmpty
-                ? Center(child: Text('No tasks yet. Add one!'))
-                : ListView.builder(
-                    itemCount: _tasks.length,
-                    itemBuilder: (ctx, index) {
-                      final task = _tasks[index];
-                      return ListTile(
-                        title: Text(
-                          task.title,
-                          style: TextStyle(
-                            decoration: task.isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                        ),
-                        subtitle: Text(task.description),
-                        leading: Checkbox(
-                          value: task.isCompleted,
-                          onChanged: (_) => _toggleTaskStatus(task.id),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () => _deleteTask(task.id),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TaskDetailScreen(task: task),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-          ),
-        ],
+      body: const Center(
+        child: Text('Todo List App'),
       ),
     );
+  }
+}"
+            language="dart"
+            filename="lib/main.dart"
+          />
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 2: Creating the Task Model</h2>
+          <p>Let's create a model class to represent a task in our to-do list.</p>
+          <CodeBlock
+            code="class Task {
+  final String id;
+  final String title;
+  final String description;
+  bool isCompleted;
+
+  Task({
+    required this.id,
+    required this.title,
+    required this.description,
+    this.isCompleted = false,
+  });
+}"
+            language="dart"
+            filename="lib/models/task.dart"
+          />
+          <p className="mt-4">
+            Now, let's create a simple data provider to manage our tasks. In a real app, you might use a database or
+            API, but for simplicity, we'll use an in-memory list.
+          </p>
+          <CodeBlock
+            code="import 'package:uuid/uuid.dart';
+import 'task.dart';
+
+class TaskProvider {
+  // Singleton pattern
+  static final TaskProvider _instance = TaskProvider._internal();
+  
+  factory TaskProvider() {
+    return _instance;
+  }
+  
+  TaskProvider._internal();
+
+  final List<Task> _tasks = [];
+  final _uuid = Uuid();
+
+  List<Task> get tasks => List.unmodifiable(_tasks);
+
+  void addTask(String title, String description) {
+    final task = Task(
+      id: _uuid.v4(),
+      title: title,
+      description: description,
+    );
+    _tasks.add(task);
+  }
+
+  void toggleTaskCompletion(String id) {
+    final taskIndex = _tasks.indexWhere((task) => task.id == id);
+    if (taskIndex != -1) {
+      _tasks[taskIndex].isCompleted = !_tasks[taskIndex].isCompleted;
+    }
+  }
+
+  void deleteTask(String id) {
+    _tasks.removeWhere((task) => task.id == id);
+  }
+
+  Task? getTask(String id) {
+    try {
+      return _tasks.firstWhere((task) => task.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+}"
+            language="dart"
+            filename="lib/models/task_provider.dart"
+          />
+          <p className="mt-4">
+            Note: You'll need to add the <code>uuid</code> package to your <code>pubspec.yaml</code> file:
+          </p>
+          <CodeBlock
+            code="dependencies:
+  flutter:
+    sdk: flutter
+  uuid: ^3.0.7"
+            language="yaml"
+            filename="pubspec.yaml (partial)"
+          />
+          <p className="mt-4">
+            Then run <code>flutter pub get</code> to install the dependency.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 3: Building the Task List Screen</h2>
+          <p>
+            Now, let's update our <code>TodoListScreen</code> to display a list of tasks.
+          </p>
+          <CodeBlock
+            code="import 'package:flutter/material.dart';
+import 'models/task.dart';
+import 'models/task_provider.dart';
+import 'task_detail_screen.dart';
+
+class TodoListScreen extends StatefulWidget {
+  const TodoListScreen({Key? key}) : super(key: key);
+
+  @override
+  _TodoListScreenState createState() => _TodoListScreenState();
+}
+
+class _TodoListScreenState extends State<TodoListScreen> {
+  final TaskProvider _taskProvider = TaskProvider();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Add some sample tasks
+    if (_taskProvider.tasks.isEmpty) {
+      _taskProvider.addTask(
+        'Buy groceries',
+        'Milk, eggs, bread, and fruits',
+      );
+      _taskProvider.addTask(
+        'Finish Flutter course',
+        'Complete the to-do list project',
+      );
+      _taskProvider.addTask(
+        'Go for a run',
+        '30 minutes of jogging in the park',
+      );
+    }
   }
 
   @override
@@ -228,34 +229,154 @@ class _HomeScreenState extends State<HomeScreen> {
     _descriptionController.dispose();
     super.dispose();
   }
-}`}
-        />
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Step 4: Create the Detail Screen</h2>
-
-        <p className="mb-4">
-          Now, let's create the detail screen that shows the details of a selected task. Create a new file called{" "}
-          <code>task_detail_screen.dart</code> in the <code>lib</code> folder:
-        </p>
-
-        <CodeBlock
-          language="dart"
-          code={`// lib/task_detail_screen.dart
-import 'package:flutter/material.dart';
-import 'task.dart';
-
-class TaskDetailScreen extends StatelessWidget {
-  final Task task;
-
-  TaskDetailScreen({required this.task});
+  void _addTask() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Task'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                ),
+              ),
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_titleController.text.isNotEmpty) {
+                  setState(() {
+                    _taskProvider.addTask(
+                      _titleController.text,
+                      _descriptionController.text,
+                    );
+                    _titleController.clear();
+                    _descriptionController.clear();
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task Details'),
+        title: const Text('Todo List'),
+      ),
+      body: _taskProvider.tasks.isEmpty
+          ? const Center(
+              child: Text('No tasks yet. Add some!'),
+            )
+          : ListView.builder(
+              itemCount: _taskProvider.tasks.length,
+              itemBuilder: (context, index) {
+                final task = _taskProvider.tasks[index];
+                return ListTile(
+                  leading: Checkbox(
+                    value: task.isCompleted,
+                    onChanged: (value) {
+                      setState(() {
+                        _taskProvider.toggleTaskCompletion(task.id);
+                      });
+                    },
+                  ),
+                  title: Text(
+                    task.title,
+                    style: TextStyle(
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
+                    ),
+                  ),
+                  subtitle: Text(task.description),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        _taskProvider.deleteTask(task.id);
+                      });
+                    },
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskDetailScreen(taskId: task.id),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addTask,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}"
+            language="dart"
+            filename="lib/todo_list_screen.dart"
+          />
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 4: Creating the Task Detail Screen</h2>
+          <p>Let's create a screen to display the details of a task when the user taps on it.</p>
+          <CodeBlock
+            code="import 'package:flutter/material.dart';
+import 'models/task.dart';
+import 'models/task_provider.dart';
+
+class TaskDetailScreen extends StatelessWidget {
+  final String taskId;
+  final TaskProvider _taskProvider = TaskProvider();
+
+  TaskDetailScreen({Key? key, required this.taskId}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final task = _taskProvider.getTask(taskId);
+
+    if (task == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Task Not Found'),
+        ),
+        body: const Center(
+          child: Text('The task you are looking for does not exist.'),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Task Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -263,51 +384,25 @@ class TaskDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Title:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
               task.title,
-              style: TextStyle(fontSize: 16),
+              style: Theme.of(context).textTheme.headline5,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 8),
             Text(
-              'Description:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              task.description,
+              style: Theme.of(context).textTheme.bodyText1,
             ),
-            SizedBox(height: 8),
-            Text(
-              task.description.isEmpty ? 'No description' : task.description,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Status:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
+            const SizedBox(height: 16),
             Row(
               children: [
-                Icon(
-                  task.isCompleted
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: task.isCompleted ? Colors.green : Colors.grey,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  task.isCompleted ? 'Completed' : 'Not completed',
-                  style: TextStyle(fontSize: 16),
+                const Text('Status: '),
+                Chip(
+                  label: Text(
+                    task.isCompleted ? 'Completed' : 'Pending',
+                  ),
+                  backgroundColor: task.isCompleted
+                      ? Colors.green.shade100
+                      : Colors.orange.shade100,
                 ),
               ],
             ),
@@ -316,229 +411,229 @@ class TaskDetailScreen extends StatelessWidget {
       ),
     );
   }
-}`}
-        />
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Step 5: Enhance the App (Optional)</h2>
-
-        <p className="mb-4">Let's add some enhancements to our app:</p>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium mb-2">1. Add a Floating Action Button</h3>
-            <p className="mb-3">Instead of having the form always visible, we can use a dialog to add tasks:</p>
-            <CodeBlock
-              language="dart"
-              code={`// Replace the form in HomeScreen with a FloatingActionButton
-// and add this method to _HomeScreenState
-
-void _showAddTaskDialog() {
-  showDialog(
-    context: context,
-    builder: (ctx) {
-      return AlertDialog(
-        title: Text('Add a New Task'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                labelText: 'Task Title',
-              ),
-            ),
-            SizedBox(height: 8),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: 'Task Description',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _addTask();
-              Navigator.of(context).pop();
-            },
-            child: Text('Add'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-// Then add this to the Scaffold
-floatingActionButton: FloatingActionButton(
-  onPressed: _showAddTaskDialog,
-  child: Icon(Icons.add),
-),`}
-            />
-          </div>
-
-          <div>
-            <h3 className="font-medium mb-2">2. Add Task Categories</h3>
-            <p className="mb-3">Let's add categories to our tasks:</p>
-            <CodeBlock
-              language="dart"
-              code={`// Update the Task class
-enum TaskCategory { personal, work, shopping, other }
-
-class Task {
-  String id;
-  String title;
-  String description;
-  bool isCompleted;
-  TaskCategory category;
-
-  Task({
-    required this.id,
-    required this.title,
-    required this.description,
-    this.isCompleted = false,
-    this.category = TaskCategory.other,
-  });
-}
-
-// Add a dropdown to select category in the dialog
-DropdownButtonFormField<TaskCategory>(
-  value: _selectedCategory,
-  decoration: InputDecoration(
-    labelText: 'Category',
-  ),
-  items: TaskCategory.values.map((category) {
-    return DropdownMenuItem(
-      value: category,
-      child: Text(category.toString().split('.').last),
-    );
-  }).toList(),
-  onChanged: (value) {
-    setState(() {
-      _selectedCategory = value!;
-    });
-  },
-),`}
-            />
-          </div>
-
-          <div>
-            <h3 className="font-medium mb-2">3. Add Due Dates</h3>
-            <p className="mb-3">Let's add due dates to our tasks:</p>
-            <CodeBlock
-              language="dart"
-              code={`// Update the Task class
-class Task {
-  String id;
-  String title;
-  String description;
-  bool isCompleted;
-  TaskCategory category;
-  DateTime? dueDate;
-
-  Task({
-    required this.id,
-    required this.title,
-    required this.description,
-    this.isCompleted = false,
-    this.category = TaskCategory.other,
-    this.dueDate,
-  });
-}
-
-// Add a date picker in the dialog
-ListTile(
-  title: Text(_dueDate == null
-      ? 'No due date'
-      : 'Due date: $_dueDate!.day}/$_dueDate!.month}/$_dueDate!.year}'),
-  trailing: Icon(Icons.calendar_today),
-  onTap: () async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
-    );
-    if (pickedDate != null) {
-      setState(() {
-        _dueDate = pickedDate;
-      });
-    }
-  },
-),`}
-            />
-          </div>
+}"
+            language="dart"
+            filename="lib/task_detail_screen.dart"
+          />
         </div>
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Step 6: Running the App</h2>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 5: Updating the Main App</h2>
+          <p>
+            Now, let's update our <code>main.dart</code> file to use our new screens.
+          </p>
+          <CodeBlock
+            code="import 'package:flutter/material.dart';
+import 'todo_list_screen.dart';
 
-        <p className="mb-4">Now that we have created our To-Do List app, let's run it:</p>
+void main() {
+  runApp(const TodoApp());
+}
 
-        <CodeBlock language="bash" code={`flutter run`} />
+class TodoApp extends StatelessWidget {
+  const TodoApp({Key? key}) : super(key: key);
 
-        <p className="mt-4">
-          This will build and run the app on your connected device or emulator. You should see the To-Do List app with
-          the ability to add, complete, and delete tasks, as well as view task details.
-        </p>
-      </section>
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Todo App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: const TodoListScreen(),
+    );
+  }
+}"
+            language="dart"
+            filename="lib/main.dart"
+          />
+        </div>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Complete App Structure</h2>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 6: Running the App</h2>
+          <p>Now, let's run our app to see it in action.</p>
+          <CodeBlock code="flutter run" language="bash" />
+          <p className="mt-4">You should see a to-do list app with the ability to:</p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>View a list of tasks</li>
+            <li>Add new tasks by tapping the floating action button</li>
+            <li>Mark tasks as completed by tapping the checkbox</li>
+            <li>Delete tasks by tapping the delete icon</li>
+            <li>View task details by tapping on a task</li>
+          </ul>
+        </div>
 
-        <p className="mb-4">Here's the complete structure of our To-Do List app:</p>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Step 7: Enhancements (Optional)</h2>
+          <p>Here are some enhancements you can make to the app:</p>
 
-        <CodeBlock
-          language="bash"
-          code={`todo_app/
-├── lib/
-│   ├── main.dart           # Main app entry point and home screen
-│   ├── task.dart           # Task model
-│   └── task_detail_screen.dart  # Detail screen for tasks
-└── pubspec.yaml            # Project dependencies`}
-        />
-      </section>
+          <h3 className="text-xl font-medium mt-4">1. Persistent Storage</h3>
+          <p>
+            Currently, our app loses all tasks when it's closed. Let's add persistent storage using the{" "}
+            <code>shared_preferences</code> package.
+          </p>
+          <p className="mt-2">
+            First, add the package to your <code>pubspec.yaml</code>:
+          </p>
+          <CodeBlock
+            code="dependencies:
+  flutter:
+    sdk: flutter
+  uuid: ^3.0.7
+  shared_preferences: ^2.2.0"
+            language="yaml"
+            filename="pubspec.yaml (partial)"
+          />
+          <p className="mt-2">
+            Then, update your <code>task_provider.dart</code> to save and load tasks:
+          </p>
+          <CodeBlock
+            code="import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+import 'task.dart';
 
-      <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-8">
-        <h3 className="font-medium text-green-800">Congratulations!</h3>
-        <p className="text-green-700">
-          You've successfully built a complete To-Do List app with Flutter! This project demonstrates many of the
-          concepts we've covered in this course, including:
-        </p>
-        <ul className="list-disc list-inside mt-2 text-green-700">
-          <li>Creating and using models</li>
-          <li>Building UI with Flutter widgets</li>
-          <li>Managing state with StatefulWidget</li>
-          <li>Navigating between screens</li>
-          <li>Handling user input</li>
-          <li>Working with lists</li>
-        </ul>
+class TaskProvider {
+  static final TaskProvider _instance = TaskProvider._internal();
+  
+  factory TaskProvider() {
+    return _instance;
+  }
+  
+  TaskProvider._internal();
+
+  List<Task> _tasks = [];
+  final _uuid = Uuid();
+  static const String _prefsKey = 'tasks';
+
+  List<Task> get tasks => List.unmodifiable(_tasks);
+
+  // Load tasks from SharedPreferences
+  Future<void> loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = prefs.getStringList(_prefsKey) ?? [];
+    
+    _tasks = tasksJson.map((taskJson) {
+      final taskMap = jsonDecode(taskJson) as Map<String, dynamic>;
+      return Task(
+        id: taskMap['id'] as String,
+        title: taskMap['title'] as String,
+        description: taskMap['description'] as String,
+        isCompleted: taskMap['isCompleted'] as bool,
+      );
+    }).toList();
+  }
+
+  // Save tasks to SharedPreferences
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = _tasks.map((task) {
+      return jsonEncode({
+        'id': task.id,
+        'title': task.title,
+        'description': task.description,
+        'isCompleted': task.isCompleted,
+      });
+    }).toList();
+    
+    await prefs.setStringList(_prefsKey, tasksJson);
+  }
+
+  Future<void> addTask(String title, String description) async {
+    final task = Task(
+      id: _uuid.v4(),
+      title: title,
+      description: description,
+    );
+    _tasks.add(task);
+    await _saveTasks();
+  }
+
+  Future<void> toggleTaskCompletion(String id) async {
+    final taskIndex = _tasks.indexWhere((task) => task.id == id);
+    if (taskIndex != -1) {
+      _tasks[taskIndex].isCompleted = !_tasks[taskIndex].isCompleted;
+      await _saveTasks();
+    }
+  }
+
+  Future<void> deleteTask(String id) async {
+    _tasks.removeWhere((task) => task.id == id);
+    await _saveTasks();
+  }
+
+  Task? getTask(String id) {
+    try {
+      return _tasks.firstWhere((task) => task.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+}"
+            language="dart"
+            filename="lib/models/task_provider.dart"
+          />
+          <p className="mt-2">
+            You'll also need to update your <code>TodoListScreen</code> to load tasks when the app starts:
+          </p>
+          <CodeBlock
+            code="@override
+void initState() {
+  super.initState();
+  _loadTasks();
+}
+
+Future<void> _loadTasks() async {
+  await _taskProvider.loadTasks();
+  setState(() {});
+  
+  // Add sample tasks only if there are no tasks after loading
+  if (_taskProvider.tasks.isEmpty) {
+    await _taskProvider.addTask(
+      'Buy groceries',
+      'Milk, eggs, bread, and fruits',
+    );
+    await _taskProvider.addTask(
+      'Finish Flutter course',
+      'Complete the to-do list project',
+    );
+    await _taskProvider.addTask(
+      'Go for a run',
+      '30 minutes of jogging in the park',
+    );
+    setState(() {});
+  }
+}"
+            language="dart"
+            filename="lib/todo_list_screen.dart (partial)"
+          />
+
+          <h3 className="text-xl font-medium mt-4">2. Task Categories</h3>
+          <p>
+            Add the ability to categorize tasks (e.g., work, personal, shopping) and filter the task list by category.
+          </p>
+
+          <h3 className="text-xl font-medium mt-4">3. Due Dates</h3>
+          <p>Add due dates to tasks and sort the task list by due date.</p>
+
+          <h3 className="text-xl font-medium mt-4">4. Task Search</h3>
+          <p>Add a search bar to filter tasks by title or description.</p>
+
+          <h3 className="text-xl font-medium mt-4">5. UI Improvements</h3>
+          <p>Enhance the UI with custom themes, animations, and more polished design.</p>
+        </div>
+
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mt-8">
+          <h3 className="text-lg font-medium text-blue-800 dark:text-blue-300">Pro Tip</h3>
+          <p className="text-blue-700 dark:text-blue-200">
+            For a more robust state management solution, consider refactoring the app to use Provider, Riverpod, or
+            Bloc. These libraries make it easier to manage state as your app grows in complexity.
+          </p>
+        </div>
+
+        <ProgressTracker section="project" />
       </div>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Next Steps</h2>
-
-        <p className="mb-4">Here are some ideas to further enhance your To-Do List app:</p>
-
-        <ul className="list-disc list-inside space-y-2">
-          <li>Add persistence using shared_preferences or SQLite</li>
-          <li>Implement filtering and sorting of tasks</li>
-          <li>Add notifications for due tasks</li>
-          <li>Implement a more advanced state management solution like Provider</li>
-          <li>Add animations for a more polished user experience</li>
-          <li>Implement a dark theme</li>
-        </ul>
-      </section>
     </div>
   )
 }

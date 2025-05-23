@@ -1,155 +1,129 @@
 import CodeBlock from "@/components/code-block"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import ProgressTracker from "@/components/progress-tracker"
 
 export default function SetupPage() {
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Setting Up Flutter for Android Development</h1>
+    <div className="container max-w-4xl mx-auto">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Setting Up Flutter for Android Development</h1>
+          <p className="text-muted-foreground">
+            A step-by-step guide to installing and configuring Flutter and Android Studio
+          </p>
+        </div>
 
-      <p className="mb-6">
-        Before you can start building Android apps with Flutter, you need to set up your development environment. This
-        guide will walk you through installing Flutter SDK and Android Studio on different operating systems.
-      </p>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">Overview</h2>
+          <p>
+            Before you can start building Flutter apps for Android, you need to set up your development environment.
+            This involves installing the Flutter SDK, Dart (which comes with Flutter), and Android Studio with the
+            necessary plugins and SDKs.
+          </p>
+          <p>This guide will walk you through the setup process for Windows, macOS, and Linux operating systems.</p>
+        </div>
 
-      <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-        <h3 className="font-medium text-blue-800">Tip</h3>
-        <p className="text-blue-700">
-          Make sure you have at least 10GB of free disk space for Android Studio, Flutter SDK, and Android emulator
-          images.
-        </p>
-      </div>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">1. Installing Flutter SDK</h2>
+          <p>The Flutter SDK contains the tools and libraries needed to develop Flutter applications.</p>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">1. Installing Flutter SDK</h2>
+          <h3 className="text-xl font-medium mt-4">Windows</h3>
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>
+              Download the latest stable Flutter SDK from the{" "}
+              <a
+                href="https://flutter.dev/docs/get-started/install/windows"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                official Flutter website
+              </a>
+              .
+            </li>
+            <li>
+              Extract the zip file to a location like <code>C:\flutter</code> (avoid spaces in the path and avoid
+              protected directories like <code>Program Files</code>).
+            </li>
+            <li>
+              Add Flutter to your PATH:
+              <ul className="list-disc pl-6 mt-2">
+                <li>Search for "Environment Variables" in the Windows search bar.</li>
+                <li>Click on "Edit the system environment variables".</li>
+                <li>Click on "Environment Variables".</li>
+                <li>Under "System variables", find the "Path" variable, select it, and click "Edit".</li>
+                <li>
+                  Click "New" and add the path to the Flutter <code>bin</code> directory (e.g.,{" "}
+                  <code>C:\flutter\bin</code>).
+                </li>
+                <li>Click "OK" to save.</li>
+              </ul>
+            </li>
+          </ol>
 
-        <Tabs defaultValue="windows">
-          <TabsList className="mb-4">
-            <TabsTrigger value="windows">Windows</TabsTrigger>
-            <TabsTrigger value="macos">macOS</TabsTrigger>
-            <TabsTrigger value="linux">Linux</TabsTrigger>
-          </TabsList>
+          <h3 className="text-xl font-medium mt-4">macOS</h3>
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>
+              Download the latest stable Flutter SDK from the{" "}
+              <a
+                href="https://flutter.dev/docs/get-started/install/macos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                official Flutter website
+              </a>
+              .
+            </li>
+            <li>
+              Extract the file to a location like <code>~/flutter</code>.
+            </li>
+            <li>
+              Add Flutter to your PATH by adding the following line to your shell profile (<code>~/.zshrc</code> for Zsh
+              or <code>~/.bash_profile</code> for Bash):
+            </li>
+          </ol>
+          <CodeBlock code="export PATH=&quot;$PATH:~/flutter/bin&quot;" language="bash" />
+          <p>Then, reload your shell configuration:</p>
+          <CodeBlock code="source ~/.zshrc  # or source ~/.bash_profile for Bash" language="bash" />
 
-          <TabsContent value="windows">
-            <ol className="list-decimal list-inside space-y-4 mb-4">
-              <li>
-                <p>
-                  Download the Flutter SDK from the{" "}
-                  <a
-                    href="https://flutter.dev/docs/get-started/install/windows"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    official Flutter website
-                  </a>
-                  .
-                </p>
-              </li>
-              <li>
-                <p>
-                  Extract the zip file to a location like <code>C:\flutter</code> (avoid spaces in the path and avoid
-                  protected directories like Program Files).
-                </p>
-              </li>
-              <li>
-                <p>Add Flutter to your PATH:</p>
-                <ul className="list-disc list-inside ml-6 mt-2">
-                  <li>Search for "Environment Variables" in Windows search</li>
-                  <li>Click "Edit the system environment variables"</li>
-                  <li>Click "Environment Variables"</li>
-                  <li>Under "User variables", select "Path" and click "Edit"</li>
-                  <li>Click "New" and add the path to flutter\bin (e.g., C:\flutter\bin)</li>
-                  <li>Click "OK" to save</li>
-                </ul>
-              </li>
-              <li>
-                <p>Verify the installation by opening a new Command Prompt and running:</p>
-                <CodeBlock language="bash" code="flutter --version" />
-              </li>
-            </ol>
-          </TabsContent>
+          <h3 className="text-xl font-medium mt-4">Linux</h3>
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>
+              Download the latest stable Flutter SDK from the{" "}
+              <a
+                href="https://flutter.dev/docs/get-started/install/linux"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                official Flutter website
+              </a>
+              .
+            </li>
+            <li>
+              Extract the file to a location like <code>~/flutter</code>.
+            </li>
+            <li>
+              Add Flutter to your PATH by adding the following line to your shell profile (<code>~/.bashrc</code> or{" "}
+              <code>~/.zshrc</code>):
+            </li>
+          </ol>
+          <CodeBlock code="export PATH=&quot;$PATH:~/flutter/bin&quot;" language="bash" />
+          <p>Then, reload your shell configuration:</p>
+          <CodeBlock code="source ~/.bashrc  # or source ~/.zshrc for Zsh" language="bash" />
 
-          <TabsContent value="macos">
-            <ol className="list-decimal list-inside space-y-4 mb-4">
-              <li>
-                <p>
-                  Download the Flutter SDK from the{" "}
-                  <a
-                    href="https://flutter.dev/docs/get-started/install/macos"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    official Flutter website
-                  </a>
-                  .
-                </p>
-              </li>
-              <li>
-                <p>Extract the file to your desired location:</p>
-                <CodeBlock language="bash" code="cd ~/development\nunzip ~/Downloads/flutter_macos_3.x.x-stable.zip" />
-              </li>
-              <li>
-                <p>Add Flutter to your PATH by editing your shell profile file (e.g., .zshrc or .bash_profile):</p>
-                <CodeBlock language="bash" code="export PATH=&quot;$PATH:$HOME/development/flutter/bin&quot;" />
-              </li>
-              <li>
-                <p>Apply the changes to your current terminal session:</p>
-                <CodeBlock language="bash" code="source ~/.zshrc  # or source ~/.bash_profile" />
-              </li>
-              <li>
-                <p>Verify the installation:</p>
-                <CodeBlock language="bash" code="flutter --version" />
-              </li>
-            </ol>
-          </TabsContent>
+          <h3 className="text-xl font-medium mt-4">Verify Flutter Installation</h3>
+          <p>To verify that Flutter is installed correctly, run:</p>
+          <CodeBlock code="flutter --version" language="bash" />
+          <p>You should see output showing the Flutter version, channel, and other information.</p>
+        </div>
 
-          <TabsContent value="linux">
-            <ol className="list-decimal list-inside space-y-4 mb-4">
-              <li>
-                <p>
-                  Download the Flutter SDK from the{" "}
-                  <a
-                    href="https://flutter.dev/docs/get-started/install/linux"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    official Flutter website
-                  </a>
-                  .
-                </p>
-              </li>
-              <li>
-                <p>Extract the file to your desired location:</p>
-                <CodeBlock
-                  language="bash"
-                  code="cd ~/development\ntar xf ~/Downloads/flutter_linux_3.x.x-stable.tar.xz"
-                />
-              </li>
-              <li>
-                <p>Add Flutter to your PATH by editing your shell profile file:</p>
-                <CodeBlock language="bash" code="export PATH=&quot;$PATH:$HOME/development/flutter/bin&quot;" />
-              </li>
-              <li>
-                <p>Apply the changes to your current terminal session:</p>
-                <CodeBlock language="bash" code="source ~/.bashrc  # or appropriate shell profile file" />
-              </li>
-              <li>
-                <p>Verify the installation:</p>
-                <CodeBlock language="bash" code="flutter --version" />
-              </li>
-            </ol>
-          </TabsContent>
-        </Tabs>
-      </section>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">2. Installing Android Studio</h2>
+          <p>Android Studio is the recommended IDE for Flutter development for Android.</p>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">2. Installing Android Studio</h2>
-
-        <ol className="list-decimal list-inside space-y-4 mb-4">
-          <li>
-            <p>
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>
               Download Android Studio from the{" "}
               <a
                 href="https://developer.android.com/studio"
@@ -157,197 +131,175 @@ export default function SetupPage() {
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                official Android website
+                official Android Studio website
               </a>
               .
-            </p>
-          </li>
-          <li>
-            <p>Install Android Studio by following the installation wizard.</p>
-          </li>
-          <li>
-            <p>During setup, ensure you install:</p>
-            <ul className="list-disc list-inside ml-6 mt-2">
-              <li>Android SDK</li>
-              <li>Android SDK Command-line Tools</li>
-              <li>Android SDK Build-Tools</li>
-              <li>Android Emulator</li>
-              <li>Android SDK Platform-Tools</li>
-            </ul>
-          </li>
-          <li>
-            <p>After installation, open Android Studio and go through the initial setup wizard.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">3. Installing Flutter and Dart Plugins</h2>
-
-        <ol className="list-decimal list-inside space-y-4 mb-4">
-          <li>
-            <p>Open Android Studio.</p>
-          </li>
-          <li>
-            <p>
-              Go to File {">"} Settings (on Windows/Linux) or Android Studio {">"} Preferences (on macOS).
-            </p>
-          </li>
-          <li>
-            <p>Select Plugins from the left sidebar.</p>
-          </li>
-          <li>
-            <p>Search for "Flutter" in the Marketplace tab.</p>
-          </li>
-          <li>
-            <p>Click Install for the Flutter plugin (this will also install the Dart plugin).</p>
-          </li>
-          <li>
-            <p>Restart Android Studio when prompted.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">4. Setting Up an Android Emulator</h2>
-
-        <ol className="list-decimal list-inside space-y-4 mb-4">
-          <li>
-            <p>Open Android Studio.</p>
-          </li>
-          <li>
-            <p>
-              Click on "More Actions" or the three dots and select "Virtual Device Manager" (or go to Tools {">"} Device
-              Manager).
-            </p>
-          </li>
-          <li>
-            <p>Click "Create Device".</p>
-          </li>
-          <li>
-            <p>Select a phone device (e.g., Pixel 6) and click "Next".</p>
-          </li>
-          <li>
-            <p>Select a system image (e.g., API 35 or the latest available) and click "Next".</p>
-            <p className="text-sm text-gray-600 ml-6 mt-1">
-              Note: You may need to download the system image first by clicking the "Download" link next to it.
-            </p>
-          </li>
-          <li>
-            <p>Verify the configuration and click "Finish".</p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">5. Setting Up a Physical Device</h2>
-
-        <ol className="list-decimal list-inside space-y-4 mb-4">
-          <li>
-            <p>Enable Developer Options on your Android device:</p>
-            <ul className="list-disc list-inside ml-6 mt-2">
-              <li>Go to Settings {">"} About phone</li>
-              <li>Tap "Build number" seven times</li>
-              <li>You should see a message that you are now a developer</li>
-            </ul>
-          </li>
-          <li>
-            <p>Enable USB Debugging:</p>
-            <ul className="list-disc list-inside ml-6 mt-2">
-              <li>
-                Go to Settings {">"} System {">"} Developer options
-              </li>
-              <li>Enable "USB debugging"</li>
-            </ul>
-          </li>
-          <li>
-            <p>Connect your device to your computer with a USB cable.</p>
-          </li>
-          <li>
-            <p>When prompted on your device, allow USB debugging.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">6. Verifying Your Setup</h2>
-
-        <p className="mb-4">Run the following command to check if everything is set up correctly:</p>
-
-        <CodeBlock language="bash" code="flutter doctor" />
-
-        <p className="mt-4">
-          This command checks your environment and displays a report of the status of your Flutter installation. It will
-          tell you if there are any dependencies you need to install to complete the setup.
-        </p>
-
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
-          <h3 className="font-medium text-yellow-800">Common Issues</h3>
-          <ul className="list-disc list-inside mt-2 text-yellow-700">
-            <li>
-              Android license status: Run <code>flutter doctor --android-licenses</code> and accept all licenses
             </li>
-            <li>Missing SDK components: Use Android Studio's SDK Manager to install missing components</li>
-            <li>PATH issues: Ensure Flutter is correctly added to your PATH</li>
+            <li>Install Android Studio following the installation wizard.</li>
+            <li>
+              During setup, make sure to install the Android SDK, Android SDK Platform-Tools, and Android SDK
+              Build-Tools.
+            </li>
+            <li>After installation, open Android Studio and go through the initial setup wizard.</li>
+          </ol>
+
+          <h3 className="text-xl font-medium mt-4">Installing Flutter and Dart Plugins</h3>
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>Open Android Studio.</li>
+            <li>
+              Go to File {">"} Settings (on Windows/Linux) or Android Studio {">"} Preferences (on macOS).
+            </li>
+            <li>Select Plugins from the left sidebar.</li>
+            <li>Search for "Flutter" in the Marketplace tab.</li>
+            <li>Click "Install" next to the Flutter plugin.</li>
+            <li>The Dart plugin will be installed automatically with Flutter.</li>
+            <li>Restart Android Studio when prompted.</li>
+          </ol>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">3. Setting Up Android Emulator</h2>
+          <p>To test your Flutter apps without a physical device, you'll need to set up an Android emulator.</p>
+
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>Open Android Studio.</li>
+            <li>Click on "More Actions" or "Configure" from the welcome screen.</li>
+            <li>Select "AVD Manager" (Android Virtual Device Manager).</li>
+            <li>Click on "Create Virtual Device".</li>
+            <li>Select a device definition (e.g., Pixel 6).</li>
+            <li>Select a system image (e.g., API 35 with Google Play).</li>
+            <li>Configure the AVD with any additional settings.</li>
+            <li>Click "Finish" to create the virtual device.</li>
+          </ol>
+
+          <p className="mt-4">
+            You can start the emulator from the AVD Manager by clicking the play button next to your virtual device.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">4. Setting Up Physical Device</h2>
+          <p>
+            If you prefer to test on a physical Android device, you'll need to enable Developer Options and USB
+            Debugging.
+          </p>
+
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>On your Android device, go to Settings {">"} About phone.</li>
+            <li>Tap on "Build number" seven times to enable Developer Options.</li>
+            <li>Go back to Settings, and you should now see "Developer options" near the bottom.</li>
+            <li>Open Developer Options and enable "USB debugging".</li>
+            <li>Connect your device to your computer with a USB cable.</li>
+            <li>When prompted on your device, allow USB debugging.</li>
+          </ol>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">5. Verifying Setup with Flutter Doctor</h2>
+          <p>
+            Flutter provides a convenient tool called "flutter doctor" that checks your environment and displays a
+            report of the status of your Flutter installation.
+          </p>
+
+          <p>Run the following command in your terminal or command prompt:</p>
+          <CodeBlock code="flutter doctor" language="bash" />
+
+          <p className="mt-4">
+            This command checks for the Flutter SDK, connected devices, and required dependencies. If there are any
+            issues, flutter doctor will provide instructions on how to resolve them.
+          </p>
+
+          <p className="mt-2">A successful output should look something like this:</p>
+          <CodeBlock
+            code="[✓] Flutter (Channel stable, 3.19.3, on macOS 14.4.1)
+[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+[✓] Xcode - develop for iOS and macOS (Xcode 15.3)
+[✓] Chrome - develop for the web
+[✓] Android Studio (version 2023.1)
+[✓] VS Code (version 1.86.2)
+[✓] Connected device (2 available)
+[✓] Network resources"
+            language="bash"
+          />
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">6. Common Setup Issues and Solutions</h2>
+
+          <h3 className="text-xl font-medium">Flutter Not Found in PATH</h3>
+          <p>
+            If you see an error like "flutter: command not found", it means Flutter is not properly added to your PATH.
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Double-check that you've added Flutter to your PATH as described in step 1.</li>
+            <li>Restart your terminal or command prompt.</li>
+            <li>On Windows, you might need to restart your computer for PATH changes to take effect.</li>
+          </ul>
+
+          <h3 className="text-xl font-medium mt-4">Android SDK License Issues</h3>
+          <p>If flutter doctor shows license issues, run:</p>
+          <CodeBlock code="flutter doctor --android-licenses" language="bash" />
+          <p>Accept all the license agreements when prompted.</p>
+
+          <h3 className="text-xl font-medium mt-4">Missing Dependencies</h3>
+          <p>
+            On Linux, you might need to install additional dependencies. Flutter doctor will list the required packages.
+            Install them using your distribution's package manager.
+          </p>
+          <CodeBlock code="sudo apt-get install <package-names>  # For Ubuntu/Debian" language="bash" />
+
+          <h3 className="text-xl font-medium mt-4">Device Not Detected</h3>
+          <p>If your physical device is not detected:</p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Make sure USB debugging is enabled.</li>
+            <li>Try a different USB cable or port.</li>
+            <li>Install the appropriate USB drivers for your device (especially on Windows).</li>
+            <li>Restart your computer and device.</li>
           </ul>
         </div>
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">7. Creating Your First Flutter Project</h2>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold">7. Creating Your First Flutter Project</h2>
+          <p>
+            Now that your environment is set up, let's create a simple Flutter project to verify everything is working
+            correctly.
+          </p>
 
-        <p className="mb-4">
-          Now that you have set up Flutter and Android Studio, let's create a simple Flutter project to verify
-          everything works:
-        </p>
+          <h3 className="text-xl font-medium">Using the Command Line</h3>
+          <p>Run the following commands in your terminal or command prompt:</p>
+          <CodeBlock
+            code="flutter create my_first_app
+cd my_first_app
+flutter run"
+            language="bash"
+          />
+          <p>
+            This will create a new Flutter project called "my_first_app", navigate into the project directory, and run
+            the app on your connected device or emulator.
+          </p>
 
-        <ol className="list-decimal list-inside space-y-4 mb-4">
-          <li>
-            <p>Open Android Studio.</p>
-          </li>
-          <li>
-            <p>
-              Click on "New Flutter Project" from the welcome screen (or File {">"} New {">"} New Flutter Project).
-            </p>
-          </li>
-          <li>
-            <p>Select "Flutter Application" and click "Next".</p>
-          </li>
-          <li>
-            <p>Configure your project:</p>
-            <ul className="list-disc list-inside ml-6 mt-2">
-              <li>Enter a project name (e.g., "my_first_app")</li>
-              <li>Verify the Flutter SDK path is correct</li>
-              <li>Set a project location</li>
-              <li>Enter a package name (e.g., "com.example.my_first_app")</li>
-            </ul>
-          </li>
-          <li>
-            <p>Click "Finish" to create the project.</p>
-          </li>
-          <li>
-            <p>
-              Run the project by clicking the "Run" button (green triangle) in the toolbar or by pressing Shift+F10
-              (Windows/Linux) or Control+R (macOS).
-            </p>
-          </li>
-          <li>
-            <p>Select your emulator or connected device from the list and wait for the app to build and launch.</p>
-          </li>
-        </ol>
+          <h3 className="text-xl font-medium mt-4">Using Android Studio</h3>
+          <ol className="list-decimal pl-6 space-y-2">
+            <li>Open Android Studio.</li>
+            <li>Click on "New Flutter Project" from the welcome screen.</li>
+            <li>Select "Flutter" as the project type.</li>
+            <li>Verify the Flutter SDK path is correct.</li>
+            <li>Enter a project name (e.g., "my_first_app").</li>
+            <li>Choose a project location.</li>
+            <li>Click "Finish" to create the project.</li>
+            <li>Once the project is created, click the "Run" button (green triangle) to run the app.</li>
+          </ol>
+        </div>
 
-        <p className="mt-4">
-          If everything is set up correctly, you should see the default Flutter counter app running on your device or
-          emulator.
-        </p>
-      </section>
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mt-8">
+          <h3 className="text-lg font-medium text-blue-800 dark:text-blue-300">Pro Tip</h3>
+          <p className="text-blue-700 dark:text-blue-200">
+            When working with Flutter, make sure to regularly update your Flutter SDK to get the latest features and bug
+            fixes. You can update Flutter by running <code>flutter upgrade</code> in your terminal.
+          </p>
+        </div>
 
-      <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-8">
-        <h3 className="font-medium text-green-800">Congratulations!</h3>
-        <p className="text-green-700">
-          You've successfully set up your Flutter development environment for Android. In the next section, we'll
-          explore the core concepts of Flutter to help you understand how to build apps.
-        </p>
+        <ProgressTracker section="setup" />
       </div>
     </div>
   )
