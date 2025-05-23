@@ -459,7 +459,7 @@ class Task {
 ListTile(
   title: Text(_dueDate == null
       ? 'No due date'
-      : 'Due date: ${_dueDate!.day}/${_dueDate!.month}/${_dueDate!.year}'),
+      : 'Due date: $_dueDate!.day}/$_dueDate!.month}/$_dueDate!.year}'),
   trailing: Icon(Icons.calendar_today),
   onTap: () async {
     final pickedDate = await showDatePicker(
